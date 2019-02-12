@@ -1,6 +1,7 @@
 
 let _pokemon = []
 let _selectedPokemon = {}
+let _myTeam = []
 
 let pokeAPI = axios.create({
     baseURL: "https://pokeapi.co/api/v2/",
@@ -16,6 +17,10 @@ export default class PokemonService {
     get Pokemons() {
         return _pokemon.filter(p => p)
     }
+    
+    // get MyTeam() {
+    //     return [..._myTeam]
+    // }
 
     getPokemon(drawAfterGettingPokemon) {
         pokeAPI.get("pokemon")
@@ -40,5 +45,20 @@ export default class PokemonService {
             .catch(function (err) {
                 console.error(err)
             })
+    }
+
+    addToTeam(drawTeamCallback) {
+        let teamMember = _myTeam.find(poke => poke.name == _selectedPokemon.name)
+        if(teamMember) {
+            return
+        }
+        _myTeam.unshift(_selectedPokemon)
+        drawTeamCallback([..._myTeam])
+    }
+
+    removeFromTeam(name, cb) {
+        let indexToRemove = _myTeam.findIndex(p => p.name == name)
+        _myTeam.splice(indexToRemove, 1)
+        cb([..._myTeam])
     }
 }
