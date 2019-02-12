@@ -20,13 +20,20 @@ function drawPokemonDetails(pokemon, templateOnly) {
             <h3>${pokemon.name}</h3>
             <img src="${pokemon.sprites["front_default"]}" alt="" srcset="">
             <p>Weight: ${pokemon.weight}</p>
-            <button class="btn btn-outline-info btn-light" onclick="app.controllers.pokemonController.addToTeam()">Add to my Team</button>
-        </div>
     `
     if (templateOnly) {
+        template += `
+            <button class="btn btn-danger" onclick="app.controllers.pokemonController.removeFromTeam('${pokemon.name}')">Remove from Team</button>
+        </div>
+        `
         return template
+    } else {
+        template += `
+            <button class="btn btn-outline-info btn-light" onclick="app.controllers.pokemonController.addToTeam()">Add to my Team</button>
+        </div>
+        `
+        document.querySelector("#pokemon").innerHTML = template;
     }
-    document.querySelector("#pokemon").innerHTML = template;
 }
 
 function drawMyTeam(myTeam) {
@@ -47,5 +54,9 @@ export default class PokemonController {
 
     addToTeam(){
         _pokemonService.addToTeam(drawMyTeam)
+    }
+
+    removeFromTeam(name) {
+        _pokemonService.removeFromTeam(name, drawMyTeam)
     }
 }

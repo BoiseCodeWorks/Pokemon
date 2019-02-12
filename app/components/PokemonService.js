@@ -5,7 +5,7 @@ let _myTeam = []
 
 let pokeAPI = axios.create({
     baseURL: "https://pokeapi.co/api/v2/",
-    timeout: 3000
+    timeout: 10000
 })
 
 
@@ -45,7 +45,17 @@ export default class PokemonService {
     }
 
     addToTeam(drawMyTeamCallback){
+        let teamMember = _myTeam.find(poke => poke.name == _selectedPokemon.name)
+        if (teamMember) {
+            return
+        }
         _myTeam.unshift(_selectedPokemon)
         drawMyTeamCallback([..._myTeam])
+    }
+
+    removeFromTeam(name, cb){
+        let index = _myTeam.findIndex(p => p.name == name)
+        _myTeam.splice(index, 1)
+        cb([..._myTeam])
     }
 }
