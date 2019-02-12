@@ -1,11 +1,13 @@
 
 let _pokemon = []
 let _selectedPokemon = {}
+let _myTeam = []
 
 let pokeAPI = axios.create({
     baseURL: "https://pokeapi.co/api/v2/",
     timeout: 3000
 })
+
 
 
 export default class PokemonService {
@@ -40,5 +42,10 @@ export default class PokemonService {
             .catch(function (err) {
                 console.error(err)
             })
+    }
+
+    addToTeam(drawMyTeamCallback){
+        _myTeam.unshift(_selectedPokemon)
+        drawMyTeamCallback([..._myTeam])
     }
 }
