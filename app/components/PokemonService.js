@@ -1,3 +1,4 @@
+import Pokemon from "../models/Pokemon.js";
 
 let _pokemon = []
 let _selectedPokemon = {}
@@ -19,15 +20,31 @@ export default class PokemonService {
         return _pokemon.filter(p => p)
     }
 
-    getPokemon(drawAfterGettingPokemon) {
-        pokeAPI.get("pokemon")
+    // getPokemon(drawAfterGettingPokemon) {
+    //     pokeAPI.get("pokemon")
+    //         .then(res => {
+    //             console.log(res.data)
+    //             _pokemon = res.data.results
+    //             drawAfterGettingPokemon()
+    //         })
+    //         .catch(function (err) {
+    //             console.error(err)
+    //         })
+    // }
+    getPokemon(cb) {
+        let endpoints = []
+        for (let i = 1; i < 151; i++) {
+            endpoints.push("/pokemon/"+i)
+        }
+        let promises = endpoints.map(endPoint => {
+            return pokeAPI.get(endPoint)
+                .then(res => res.data) 
+        })
+        Promise.all(promises)
             .then(res => {
-                console.log(res.data)
-                _pokemon = res.data.results
-                drawAfterGettingPokemon()
-            })
-            .catch(function (err) {
-                console.error(err)
+                let pokemons = res.map(p => new Pokemon(p))
+                _pokemon = pokemons
+                setInterval(cb, 1000)
             })
     }
 
@@ -44,7 +61,7 @@ export default class PokemonService {
             })
     }
 
-    addToTeam(drawMyTeamCallback){
+    addToTeam(drawMyTeamCallback) {
         let teamMember = _myTeam.find(poke => poke.name == _selectedPokemon.name)
         if (teamMember) {
             return
@@ -53,7 +70,7 @@ export default class PokemonService {
         drawMyTeamCallback([..._myTeam])
     }
 
-    removeFromTeam(name, cb){
+    removeFromTeam(name, cb) {
         let index = _myTeam.findIndex(p => p.name == name)
         _myTeam.splice(index, 1)
         cb([..._myTeam])
